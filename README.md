@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Global Superstore Sales Analytics
 ### End-to-End Enterprise Data Engineering, Business Intelligence & Strategic Profitability Analysis
 
@@ -388,3 +389,7 @@ The project includes an automated test suite executed via `pytest`:
 ## 📄 License
 
 This project is licensed under the **MIT License** — see the [`LICENSE`](LICENSE) file for complete terms.
+=======
+# Global-Superstore-Sales-Analysis
+An end-to-end Global Superstore Sales Analysis project using Python, Pandas, NumPy, Matplotlib, Seaborn, and Power BI. Includes data cleaning, exploratory data analysis, KPI analysis, sales and profitability trends, customer insights, geographical analysis, and interactive business intelligence dashboards to generate actionable business insights.
+>>>>>>> 639d70f5fdcafc0f2e551fe4739eedace329a14c
