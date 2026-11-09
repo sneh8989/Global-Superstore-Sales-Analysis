@@ -1,0 +1,20 @@
+# Global Superstore Sales Analysis - Project Dependencies
+# Python Runtime: >= 3.9 (Tested on Python 3.10, 3.11, 3.12, 3.13, 3.14)
+
+# Core Data Manipulation & Mathematics
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Data Visualization & Graphics
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Excel Workbook & Reporting Engine
+openpyxl>=3.1.0
+
+# Interactive Notebook Environment
+ipython>=8.0.0
+ipykernel>=6.20.0
+
+# Quality Assurance & Testing Suite
+pytest>=7.4.0
