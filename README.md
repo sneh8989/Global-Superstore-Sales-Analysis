@@ -381,7 +381,7 @@ The project includes an automated test suite executed via `pytest`:
 **Sneh Kheni**
 *Aspiring Data Analyst & Analytics Engineer*
 - **Specializations:** Python | SQL | Power BI | Data Modeling | Business Analytics | Statistical Analysis
-- **Repository:** [Global-Superstore-Sales-Analysis](https://github.com/)
+- **Repository:** [Global-Superstore-Sales-Analysis](https://github.com/sneh8989/Global-Superstore-Sales-Analysis.git)
 - **Documentation:** [`docs/`](docs/)
 
 ---
