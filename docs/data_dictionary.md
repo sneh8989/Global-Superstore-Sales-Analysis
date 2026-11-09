@@ -42,7 +42,7 @@ This document provides a comprehensive data dictionary for the Global Superstore
 | `Shipping_Days`| Integer | Fulfillment duration (`Ship.Date - Order.Date`) | `0`, `2`, `4`, `7` | Engineered |
 | `Profit_Margin_Pct`| Float | Percentage net margin on line item (`Profit/Sales*100`)| `14.2%`, `-35.0%` | Engineered |
 | `Unit_Price` | Float | Average gross price per unit (`Sales / Quantity`) | `9.50`, `1617.00` | Engineered |
-| `Estimated_Cost`| Float | Estimated cost of goods and operational freight (`Sales - Profit`)| `14.63`, `154.20` | Engineered |
+| `Estimated_Cost`| Float | Calculated as Sales minus Profit (`Sales - Profit`), representing total Cost of Goods Sold (COGS) and allocated fulfillment/operational costs recognized on the line item | `14.63`, `154.20` | Engineered |
 | `Discount_Band`| Categorical | Binned discount rate for margin elasticity analysis | `0% (No Discount)`, `11%-20%`, `>50%` | Engineered |
 
 ---
@@ -52,3 +52,14 @@ This document provides a comprehensive data dictionary for the Global Superstore
 | Field Name | Source | Reason for Removal |
 | :--- | :--- | :--- |
 | `记录数` | Raw Tableau Export | Chinese string header meaning "Record Count". Redundant constant value `1` across all 51,290 records. Dropped to maintain clean data standards without impacting any business logic. |
+
+---
+
+## 3. Dataset Licensing & Redistribution Limitations
+
+The **Global Superstore** dataset is a synthetic, open retail benchmark created for educational, business intelligence, and analytical portfolio demonstrations (widely distributed via Tableau Public and Kaggle under open public domain / CC0 equivalent terms).
+
+### Redistribution & Usage Governance:
+- **Synthetic Data:** The dataset contains synthetic / fictional customer orders, mock addresses, and generated customer names. It contains **no real-world Personally Identifiable Information (PII)** or proprietary corporate secrets.
+- **Permitted Use:** Open for portfolio showcases, educational analysis, academic research, and non-commercial demonstrations.
+- **Redistribution Notice:** When distributing or cloning this repository, retain attribution to the original Tableau/Kaggle Global Superstore open data source.

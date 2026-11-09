@@ -26,15 +26,23 @@ flowchart LR
 
 ## 2. Mathematical Formulations & KPI Definitions
 
+### Terminology Hierarchy
+- **Line Items (Records):** The 51,290 individual product-level rows in the dataset.
+- **Unique Orders:** The 25,035 distinct customer order IDs (`Order.ID`), averaging ~2.05 line items per order.
+- **Loss-Making Line Items:** 12,544 rows (24.46% of all line items) generating negative profit.
+- **Orders Containing Losses:** 7,541 distinct orders (30.12% of unique orders) containing $\ge 1$ loss-making item.
+- **Net-Loss Orders:** 6,125 distinct orders (24.47% of unique orders) whose cumulative net profit across all line items is $< \$0$.
+
 | Metric | Business Definition | Mathematical Formula | Power BI DAX Expression |
 | :--- | :--- | :--- | :--- |
-| **Total Revenue** | Aggregate gross sales across all transactions | $\sum \text{Sales}$ | `SUM(cleaned_superstore[Sales])` |
+| **Total Revenue** | Aggregate gross sales across all line items | $\sum \text{Sales}$ | `SUM(cleaned_superstore[Sales])` |
 | **Total Net Profit** | Aggregate bottom-line earnings | $\sum \text{Profit}$ | `SUM(cleaned_superstore[Profit])` |
 | **Profit Margin %** | Share of gross revenue converted to profit | $\frac{\text{Total Profit}}{\text{Total Sales}} \times 100$ | `DIVIDE([Total Profit], [Total Sales])` |
 | **Order Volume** | Total distinct customer orders fulfilled | $\text{CountDistinct}(\text{Order.ID})$ | `DISTINCTCOUNT(cleaned_superstore[Order.ID])` |
 | **Customer Base** | Total unique purchasing accounts | $\text{CountDistinct}(\text{Customer.ID})$ | `DISTINCTCOUNT(cleaned_superstore[Customer.ID])` |
 | **Average Order Value (AOV)** | Average revenue per unique order | $\frac{\text{Total Sales}}{\text{Total Orders}}$ | `DIVIDE([Total Sales], [Order Count])` |
 | **Quantity Sold** | Total physical units transacted | $\sum \text{Quantity}$ | `SUM(cleaned_superstore[Quantity])` |
+| **Estimated Cost** | Total product COGS plus allocated fulfillment cost | $\text{Sales} - \text{Profit}$ | Calculated Column |
 | **Fulfillment Duration** | Days elapsed between order placement and dispatch | $\text{Ship.Date} - \text{Order.Date}$ | `DATEDIFF(Order.Date, Ship.Date, DAY)` |
 | **YoY Sales Growth** | Annual revenue expansion rate | $\frac{\text{Sales}_t - \text{Sales}_{t-1}}{\text{Sales}_{t-1}} \times 100$ | Time Intelligence DAX |
 | **3-Year CAGR** | Geometric annualized revenue growth rate | $\left(\frac{\text{Sales}_{2014}}{\text{Sales}_{2011}}\right)^{1/3} - 1$ | Custom Metric |

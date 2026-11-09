@@ -13,7 +13,7 @@ def test_pbix_file_exists_and_valid():
     pbix_path = "dashboard/SuperstoreDashboard.pbix"
     assert os.path.exists(pbix_path), f"PBIX file not found at {pbix_path}"
     assert os.path.getsize(pbix_path) > 1_000_000, "PBIX file is unexpectedly small"
-    
+
     with zipfile.ZipFile(pbix_path, "r") as z:
         names = z.namelist()
         assert "Report/Layout" in names, "Missing Report/Layout in PBIX"
@@ -23,7 +23,7 @@ def test_pbix_file_exists_and_valid():
 def test_power_bi_column_dependencies():
     """Verify that cleaned_superstore.csv maintains all columns required by Power BI visuals."""
     df_cleaned = pd.read_csv("data/processed/cleaned_superstore.csv")
-    
+
     # Exact columns referenced in Power BI Report/Layout
     pbi_required_columns = [
         "Category",
@@ -71,6 +71,6 @@ def test_excel_reports_exist():
     master_report = "outputs/reports/global_superstore_executive_report.xlsx"
     assert os.path.exists(master_report), f"Master report missing: {master_report}"
     assert os.path.getsize(master_report) > 5000, "Master report file size too small"
-    
+
     pivot_table = "outputs/pivot_tables/sales_by_category_segment.xlsx"
     assert os.path.exists(pivot_table), f"Pivot table missing: {pivot_table}"

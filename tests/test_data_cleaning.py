@@ -52,6 +52,15 @@ def test_shipping_days_validity(cleaned_tuple):
     assert df_clean["Shipping_Days"].mean() > 0
 
 
+def test_no_records_discarded(cleaned_tuple):
+    """Ensure no records are silently discarded during cleaning."""
+    df_clean, report = cleaned_tuple
+    assert report["records_discarded"] == 0
+    assert len(df_clean) == 51290
+    assert report["invalid_order_dates"] == 0
+    assert report["invalid_ship_dates"] == 0
+
+
 def test_engineered_features_present(cleaned_tuple):
     """Verify presence of key operational and financial features."""
     df_clean, _ = cleaned_tuple

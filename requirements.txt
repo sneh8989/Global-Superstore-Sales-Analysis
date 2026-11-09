@@ -1,4 +1,5 @@
 # Global Superstore Sales Analysis - Project Dependencies
+# Compatible Python Dependencies (Minimum Requirements)
 # Python Runtime: >= 3.9 (Tested on Python 3.10, 3.11, 3.12, 3.13, 3.14)
 
 # Core Data Manipulation & Mathematics

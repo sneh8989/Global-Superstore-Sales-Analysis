@@ -12,7 +12,7 @@
 
 ## 📌 Executive Summary
 
-The **Global Superstore Sales Analytics** project is an industry-grade, end-to-end data analysis portfolio project analyzing **51,290 customer transactions** across **147 countries**, **3 product categories**, and **4 operational years (2011–2014)**.
+The **Global Superstore Sales Analytics** project is an industry-grade, end-to-end data analysis portfolio project analyzing **51,290 retail line items** across **25,035 unique customer orders**, **147 countries**, **3 product categories**, and **4 operational years (2011–2014)**.
 
 By pairing rigorous Python-based data engineering and statistical modeling with an interactive 5-page **Power BI** executive dashboard, this project investigates top-line revenue drivers, customer purchasing patterns, fulfillment efficiency, and bottom-line margin erosion.
 
@@ -20,10 +20,14 @@ By pairing rigorous Python-based data engineering and statistical modeling with 
 - **Total Revenue (Sales):** **$12,642,905.00**
 - **Total Net Profit:** **$1,467,457.29**
 - **Overall Operating Margin:** **11.61%**
-- **Unique Orders Fulfilled:** **25,035** (Across **4,873** unique customers)
+- **Total Line Items (Transactions):** **51,290**
+- **Unique Orders Fulfilled:** **25,035** (Across **4,873** unique customers, averaging ~2.05 items per order)
 - **Average Order Value (AOV):** **$505.01**
+- **Loss-Making Line Items:** **12,544** (24.46% of all line items)
+- **Unique Orders Containing Losses:** **7,541** (30.12% of all orders)
+- **Orders with Net Negative Cumulative Profit:** **6,125** (24.47% of all orders)
 - **3-Year Compound Annual Growth Rate (CAGR):** **23.92% Sales CAGR**, **26.52% Profit CAGR**
-- **The "Discount Bleed" Discovery:** Transactions with discounts $>20\%$ generated **-$814,682.09 in net losses** across 11,328 orders, halving corporate profit margins from **21.30%** (safe discounts $\le 20\%$) to **11.61%**.
+- **The "Discount Bleed" Discovery:** Line items with discounts $>20\%$ (11,328 items across 6,315 unique orders) generated **-$814,682.09 in net losses**, halving corporate profit margins from **21.30%** (safe discounts $\le 20\%$) to **11.61%**.
 
 ---
 
@@ -56,7 +60,7 @@ While Global Superstore experienced robust revenue expansion between 2011 and 20
 Global-Superstore-Sales-Analysis/
 │
 ├── README.md                           # Master Project Documentation & Portfolio Showcase
-├── requirements.txt                    # Locked Python dependencies
+├── requirements.txt                    # Compatible Python dependencies (minimum requirements)
 ├── pytest.ini                          # Automated test runner configuration
 ├── .gitignore                          # Standard git exclusion rules
 ├── LICENSE                             # MIT Open-Source License
@@ -123,13 +127,16 @@ Global-Superstore-Sales-Analysis/
 ## 📊 Dataset Profile
 
 - **Source:** Global Superstore Retail Dataset (Open Public Domain Benchmark)
-- **Total Records:** **51,290 transactions**
+- **Total Records:** **51,290 line items** across **25,035 unique orders**
 - **Temporal Horizon:** **January 1, 2011 to December 31, 2014** (4 full calendar years)
 - **Geographic Scope:** 147 Countries, 13 Global Regions, 7 Operating Markets (`APAC`, `EU`, `US`, `LATAM`, `EMEA`, `Africa`, `Canada`)
 - **Product Hierarchy:** 3 Categories (`Technology`, `Furniture`, `Office Supplies`), 17 Sub-Categories, 10,292 unique SKUs
 - **Customer Base:** 4,873 Unique Customers spanning 3 Segments (`Consumer`, `Corporate`, `Home Office`)
 
 Full column definitions, data types, and transformation rules are documented in [`docs/data_dictionary.md`](docs/data_dictionary.md).
+
+### Dataset Licensing & Redistribution Limitations
+The Global Superstore dataset is an educational and portfolio benchmark dataset widely utilized across data science and business analytics curricula. In accordance with open portfolio project practices, the processed dataset is provided within this repository (`data/processed/cleaned_superstore.csv`) to enable complete, reproducible pipeline execution. If utilizing this project or data for commercial deployment or enterprise benchmarking, users must independently verify licensing terms applicable to their specific source data.
 
 ---
 
@@ -147,22 +154,26 @@ Full column definitions, data types, and transformation rules are documented in 
 
 ## 📈 Verified Key Performance Indicators (KPIs)
 
-All KPIs have been calculated using Python and cross-reconciled against the Power BI DAX semantic model with **100% mathematical parity**:
+All core financial, volume, and customer metrics have been calculated using Python and cross-reconciled against the Power BI DAX semantic model with **100% mathematical parity**:
 
 | Metric Name | Python Calculation | Power BI DAX Measure | Value | Business Meaning |
 | :--- | :--- | :--- | :--- | :--- |
-| **Total Revenue** | `df['Sales'].sum()` | `SUM(cleaned_superstore[Sales])` | **$12,642,905.00** | Gross transaction volume |
+| **Total Revenue** | `df['Sales'].sum()` | `SUM(cleaned_superstore[Sales])` | **$12,642,905.00** | Gross transaction volume across all line items |
 | **Total Net Profit** | `df['Profit'].sum()` | `SUM(cleaned_superstore[Profit])` | **$1,467,457.29** | Cumulative bottom-line earnings |
 | **Operating Margin**| `(Profit / Sales) * 100` | `DIVIDE([Total Profit], [Total Sales])` | **11.61%** | Revenue conversion to profit |
-| **Order Volume** | `df['Order.ID'].nunique()` | `DISTINCTCOUNT(cleaned_superstore[Order.ID])` | **25,035** | Unique orders processed |
-| **Customer Count** | `df['Customer.ID'].nunique()` | `DISTINCTCOUNT(cleaned_superstore[Customer.ID])`| **4,873** | Active purchasing accounts |
+| **Estimated Cost** | `(df['Sales'] - df['Profit']).sum()` | `[Total Sales] - [Total Profit]` | **$11,175,447.71** | Cost of Goods Sold (COGS) + operational costs |
+| **Line Item Count** | `len(df)` | `COUNTROWS(cleaned_superstore)` | **51,290** | Total individual line items recorded |
+| **Order Volume** | `df['Order.ID'].nunique()` | `DISTINCTCOUNT(cleaned_superstore[Order.ID])` | **25,035** | Unique customer order baskets processed |
+| **Customer Count** | `df['Customer.ID'].nunique()` | `DISTINCTCOUNT(cleaned_superstore[Customer.ID])`| **4,873** | Active purchasing customer accounts |
 | **Quantity Sold** | `df['Quantity'].sum()` | `SUM(cleaned_superstore[Quantity])` | **178,312 units** | Physical goods distributed |
-| **Average Order Value (AOV)**| `Sales / Orders` | `DIVIDE([Total Sales], [Order Count])` | **$505.01** | Mean basket revenue |
-| **Avg Profit / Order** | `Profit / Orders` | `DIVIDE([Total Profit], [Order Count])` | **$58.62** | Mean basket profit |
+| **Average Order Value (AOV)**| `Sales / Orders` | `DIVIDE([Total Sales], [Order Count])` | **$505.01** | Mean basket revenue per unique order |
+| **Avg Profit / Order** | `Profit / Orders` | `DIVIDE([Total Profit], [Order Count])` | **$58.62** | Mean basket profit per unique order |
 | **Avg Shipping Cost** | `df['Shipping.Cost'].mean()` | `AVERAGE(cleaned_superstore[Shipping.Cost])` | **$26.38** | Mean freight cost per line item |
 | **Avg Fulfillment Time**| `(Ship.Date - Order.Date).dt.days.mean()` | `DATEDIFF(Order.Date, Ship.Date, DAY)` | **3.97 days** | Operational dispatch duration |
-| **Loss-Making Transactions**| `(df['Profit'] < 0).sum()` | `CALCULATE(COUNTROWS(), Profit < 0)` | **12,544 (24.46%)**| Orders operating at a deficit |
-| **Total Losses Incurred**| `df.loc[Profit < 0, 'Profit'].sum()` | `CALCULATE(SUM(Profit), Profit < 0)`| **-$920,646.16** | Unrecovered operational bleed |
+| **Loss-Making Line Items**| `(df['Profit'] < 0).sum()` | `CALCULATE(COUNTROWS(), Profit < 0)` | **12,544 (24.46%)**| Individual items sold at a financial loss |
+| **Orders with Losses** | `df[df['Profit'] < 0]['Order.ID'].nunique()` | `CALCULATE(DISTINCTCOUNT(Order.ID), Profit < 0)` | **7,541 (30.12%)** | Unique orders containing $\ge 1$ loss item |
+| **Net-Loss Orders** | `(df.groupby('Order.ID')['Profit'].sum() < 0).sum()` | *Calculated Table / Filter* | **6,125 (24.47%)** | Orders whose overall basket profit is negative |
+| **Total Losses Incurred**| `df.loc[Profit < 0, 'Profit'].sum()` | `CALCULATE(SUM(Profit), Profit < 0)`| **-$920,646.16** | Cumulative loss across all negative line items |
 
 ---
 
@@ -170,8 +181,8 @@ All KPIs have been calculated using Python and cross-reconciled against the Powe
 
 ### 1. The "Discount Bleed": The Primary Driver of Profit Erosion
 An in-depth elasticity analysis reveals an aggressive margin cliff directly correlated with discount rates:
-- **Discounts $\le 20\%$:** Account for $10.71M in sales and **$2,282,139.38 in profit** (**21.30% profit margin**).
-- **Discounts $> 20\%$:** Encompass 11,328 transactions generating $1.93M in sales but **-$814,682.09 in net losses**.
+- **Discounts $\le 20\%$:** Account for $10.71M in sales and **$2,282,139.38 in profit** (**21.30% profit margin**) across 39,962 line items and 20,311 unique orders.
+- **Discounts $> 20\%$:** Encompass 11,328 line items (across 6,315 unique orders) generating $1.93M in sales but **-$814,682.09 in net losses**.
 - **Discounts $> 50\%$:** Result in an average profit margin of **-88.4%**.
 - **Insight:** Over **$814K in profit** was actively destroyed by unconstrained discounting, effectively halving overall company margins.
 
@@ -305,6 +316,7 @@ source venv/bin/activate
 ```
 
 ### 3. Install Dependencies
+Dependencies in `requirements.txt` specify tested minimum compatible versions (e.g., `pandas>=2.0.0`) to avoid rigid build locks and ensure seamless cross-platform installation across Python 3.10 through 3.14:
 ```bash
 pip install -r requirements.txt
 ```
@@ -343,13 +355,13 @@ jupyter notebook notebooks/
 ## 🧪 Quality Assurance & Test Coverage
 
 The project includes an automated test suite executed via `pytest`:
-- **`test_data_cleaning.py`:** Validates 51,290 row count, zero null values, artifact removal, datetime parsing, non-negative delivery days, and engineered features.
-- **`test_kpi_engine.py`:** Asserts exact mathematical parity against ground truth ($12,642,905 sales, $1,467,457.29 profit, 11.61% margin, 25,035 orders, 4,873 customers, $505.01 AOV).
+- **`test_data_cleaning.py`:** Validates 51,290 row count, zero null values, artifact removal, pre-engineering numeric coercion, zero silently discarded records, non-negative delivery days, and engineered features.
+- **`test_kpi_engine.py`:** Asserts exact mathematical parity against ground truth ($12,642,905 sales, $1,467,457.29 profit, 11.61% margin, 25,035 orders, 4,873 customers, $505.01 AOV), and validates distinct order counts vs line item counts for loss metrics.
 - **`test_time_series.py`:** Regresses the chronological sorting bug, asserting positive YoY growth (+18.5%, +27.2%, +26.3%) across all operational years.
 - **`test_dashboard_integrity.py`:** Asserts `.pbix` archive integrity, visual output availability, and Excel report formatting.
 
 ```bash
-============================= 18 passed in 3.19s =============================
+============================= 21 passed in 3.96s =============================
 ```
 
 ---
@@ -365,11 +377,11 @@ The project includes an automated test suite executed via `pytest`:
 
 ## 👤 Author & Contact
 
-**Sneh Kheni**  
-*Aspiring Data Analyst & Analytics Engineer*  
-- **Specializations:** Python | SQL | Power BI | Data Modeling | Business Analytics | Statistical Analysis  
-- **Repository:** [Global-Superstore-Sales-Analysis](https://github.com/)  
-- **Documentation:** [`docs/`](docs/)  
+**Sneh Kheni**
+*Aspiring Data Analyst & Analytics Engineer*
+- **Specializations:** Python | SQL | Power BI | Data Modeling | Business Analytics | Statistical Analysis
+- **Repository:** [Global-Superstore-Sales-Analysis](https://github.com/)
+- **Documentation:** [`docs/`](docs/)
 
 ---
 

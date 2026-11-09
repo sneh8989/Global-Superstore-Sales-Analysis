@@ -21,14 +21,14 @@ def format_worksheet(ws, title: str):
         top=Side(style="thin", color="D9D9D9"),
         bottom=Side(style="thin", color="D9D9D9")
     )
-    
+
     # Format header row (row 1)
     for col in range(1, ws.max_column + 1):
         cell = ws.cell(row=1, column=col)
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = Alignment(horizontal="center", vertical="center")
-        
+
     # Format data rows
     for row in range(2, ws.max_row + 1):
         is_even = (row % 2 == 0)
@@ -39,7 +39,7 @@ def format_worksheet(ws, title: str):
             cell.border = thin_border
             if row_fill and not cell.fill.start_color.rgb:
                 cell.fill = row_fill
-                
+
             # Number formatting
             if isinstance(cell.value, (int, float)):
                 if abs(cell.value) >= 1000:
@@ -48,7 +48,7 @@ def format_worksheet(ws, title: str):
                     cell.number_format = "#,##0.00"
                 else:
                     cell.number_format = "#,##0"
-                    
+
     # Auto-adjust column widths
     for col in ws.columns:
         max_len = 0
@@ -69,40 +69,40 @@ def export_all_pivot_tables_and_reports(df: pd.DataFrame, base_dir: str = None) 
             base_dir = ".."
         else:
             base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-            
+
     pivot_dir = os.path.join(base_dir, "outputs", "pivot_tables")
     reports_dir = os.path.join(base_dir, "outputs", "reports")
     os.makedirs(pivot_dir, exist_ok=True)
     os.makedirs(reports_dir, exist_ok=True)
-    
+
     # 1. Sales by Category & Segment
     sales_cat_seg = pd.pivot_table(
         df, index="Category", columns="Segment", values="Sales", aggfunc="sum", margins=True, margins_name="Total"
     )
     sales_cat_seg_path = os.path.join(pivot_dir, "sales_by_category_segment.xlsx")
     sales_cat_seg.to_excel(sales_cat_seg_path)
-    
+
     # 2. Profit by Category & Segment
     profit_cat_seg = pd.pivot_table(
         df, index="Category", columns="Segment", values="Profit", aggfunc="sum", margins=True, margins_name="Total"
     )
     profit_cat_seg_path = os.path.join(pivot_dir, "profit_by_category_segment.xlsx")
     profit_cat_seg.to_excel(profit_cat_seg_path)
-    
+
     # 3. Profit by Region & Category
     profit_reg_cat = pd.pivot_table(
         df, index="Region", columns="Category", values="Profit", aggfunc="sum", margins=True, margins_name="Total"
     )
     profit_reg_cat_path = os.path.join(pivot_dir, "profit_by_region_category.xlsx")
     profit_reg_cat.to_excel(profit_reg_cat_path)
-    
+
     # 4. Profit by Market & Category
     profit_mkt_cat = pd.pivot_table(
         df, index="Market", columns="Category", values="Profit", aggfunc="sum", margins=True, margins_name="Total"
     )
     profit_mkt_cat_path = os.path.join(pivot_dir, "profit_by_market_category.xlsx")
     profit_mkt_cat.to_excel(profit_mkt_cat_path)
-    
+
     # 5. Master Multi-Tab Executive Report
     master_path = os.path.join(reports_dir, "global_superstore_executive_report.xlsx")
     with pd.ExcelWriter(master_path, engine="openpyxl") as writer:
@@ -114,19 +114,20 @@ def export_all_pivot_tables_and_reports(df: pd.DataFrame, base_dir: str = None) 
         profit_reg_cat.reset_index().to_excel(writer, sheet_name="Profit_Region_Category", index=False)
         # Tab 4: Market Performance
         profit_mkt_cat.reset_index().to_excel(writer, sheet_name="Profit_Market_Category", index=False)
-        
+
         # Tab 5: Discount Impact
         disc_summary = df.groupby("Discount_Band", observed=False).agg(
             Total_Sales=("Sales", "sum"),
             Total_Profit=("Profit", "sum"),
-            Total_Orders=("Order.ID", "nunique"),
+            Line_Item_Count=("Order.ID", "count"),
+            Unique_Orders=("Order.ID", "nunique"),
             Avg_Shipping_Cost=("Shipping.Cost", "mean")
         ).reset_index()
         disc_summary["Profit_Margin_Pct"] = (
             disc_summary["Total_Profit"] / disc_summary["Total_Sales"] * 100
         ).round(2)
         disc_summary.to_excel(writer, sheet_name="Discount_Impact_Analysis", index=False)
-        
+
         # Tab 6: Yearly Trends
         yearly = df.groupby("Year").agg(
             Total_Sales=("Sales", "sum"),
@@ -145,7 +146,7 @@ def export_all_pivot_tables_and_reports(df: pd.DataFrame, base_dir: str = None) 
     for sheet_name in wb.sheetnames:
         format_worksheet(wb[sheet_name], sheet_name)
     wb.save(master_path)
-    
+
     return {
         "master_report": master_path,
         "pivot_tables": [

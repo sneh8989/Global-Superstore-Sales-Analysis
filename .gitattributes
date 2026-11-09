@@ -1,0 +1,20 @@
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto
+
+# Text files with explicit LF
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.ini text eol=lf
+*.json text eol=lf
+*.ipynb text eol=lf
+*.csv text eol=lf
+
+# Binary data, workbook, and dashboard files (preserve exact bytes)
+*.pbix binary
+*.xlsx binary
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary

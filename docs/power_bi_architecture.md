@@ -7,7 +7,7 @@ This document provides a technical walkthrough of the **Global Superstore Sales 
 ## 1. Data Model Overview
 
 The Power BI data model utilizes an efficient Star-Schema semantic structure:
-- **Fact Table (`cleaned_superstore`):** 51,290 records tracking transactional orders across sales, profit, quantity, discount, customer, product, and geography.
+- **Fact Table (`cleaned_superstore`):** 51,290 line items tracking customer purchases across sales, profit, quantity, discount, customer, product, and geography.
 - **Dimension Table (`DateTable`):** Dedicated calendar table providing continuous date hierarchies, month names, quarters, and YearMonth keys.
 - **Relationship:** `cleaned_superstore[Order.Date]` connected $N:1$ with `DateTable[Date]`.
 
@@ -43,7 +43,7 @@ Profit Margin % = DIVIDE([Total Profit], [Total Sales], 0)
 Order Count = DISTINCTCOUNT(cleaned_superstore[Order.ID])
 ```
 - **Value:** 25,035
-- **Purpose:** Unique customer transactions fulfilled.
+- **Purpose:** Count of distinct customer purchase orders.
 
 ### Average Order Value (AOV)
 ```dax

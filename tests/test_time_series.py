@@ -32,13 +32,13 @@ def test_positive_yoy_sales_growth(df_cleaned):
     """
     yearly = analyze_yearly_trends(df_cleaned)
     growth_rates = yearly["YoY_Sales_Growth_Pct"].dropna().tolist()
-    
+
     # 2012 vs 2011: ~18.50%
     # 2013 vs 2012: ~27.20%
     # 2014 vs 2013: ~26.25%
     for rate in growth_rates:
         assert rate > 0, f"YoY sales growth should be positive, got {rate}%"
-    
+
     assert growth_rates[0] == pytest.approx(18.50, abs=0.1)
     assert growth_rates[1] == pytest.approx(27.20, abs=0.1)
     assert growth_rates[2] == pytest.approx(26.25, abs=0.1)
@@ -48,10 +48,10 @@ def test_positive_yoy_profit_growth(df_cleaned):
     """Profit grew year-over-year throughout 2011-2014."""
     yearly = analyze_yearly_trends(df_cleaned)
     profit_growth = yearly["YoY_Profit_Growth_Pct"].dropna().tolist()
-    
+
     for rate in profit_growth:
         assert rate > 0, f"YoY profit growth should be positive, got {rate}%"
-        
+
     assert profit_growth[0] == pytest.approx(23.49, abs=0.1)
     assert profit_growth[1] == pytest.approx(32.37, abs=0.1)
     assert profit_growth[2] == pytest.approx(23.89, abs=0.1)
